@@ -20,6 +20,11 @@ import (
 )
 
 func setup(ctx context.Context, db *sql.DB) error {
+    _, err := db.ExecContext(ctx, "PRAGMA foreign_keys = ON;")
+	if err != nil {
+        return fmt.Errorf("error enable foreign_keys constraint: %w", err)
+	}
+
 	personQuery := `
         CREATE TABLE IF NOT EXISTS person (
             rowid INTEGER PRIMARY KEY,
@@ -35,6 +40,8 @@ func setup(ctx context.Context, db *sql.DB) error {
         CREATE TABLE IF NOT EXISTS relationship (
             ancestor INTEGER,
             descendant INTEGER,
+            FOREIGN KEY (ancestor) REFERENCES person (rowid),
+            FOREIGN KEY (descendant) REFERENCES person (rowid),
             UNIQUE (ancestor, descendant)
         )
     `
@@ -51,9 +58,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+    defer db.Close()
 
 	ctx, cancelFunc := context.WithTimeout(context.TODO(), 1*time.Second)
 	defer cancelFunc()
+
+
 
 	if err := setup(ctx, db); err != nil {
 		panic(err)

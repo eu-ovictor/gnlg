@@ -22,10 +22,10 @@ type EditPersonResponse struct {
 }
 
 type personHandler struct {
-	usecase PersonUsecase
+	usecase Usecase
 }
 
-func AddRoutes(router *router.Router, usecase PersonUsecase) {
+func AddRoutes(router *router.Router, usecase Usecase) {
 	handler := personHandler{usecase}
 
 	router.GET("/person", handler.Fetch)
@@ -41,6 +41,7 @@ func (h personHandler) Add(ctx *fasthttp.RequestCtx) {
 
 		msg := fmt.Sprintf("error decoding request body: %s", err.Error())
 		ctx.SetBodyString(msg)
+		return
 	}
 
 	err := h.usecase.Add(person)
@@ -49,6 +50,7 @@ func (h personHandler) Add(ctx *fasthttp.RequestCtx) {
 
 		msg := fmt.Sprintf("error adding person: %s", err.Error())
 		ctx.SetBodyString(msg)
+		return
 	}
 
 	ctx.SetStatusCode(fasthttp.StatusCreated)
@@ -66,6 +68,7 @@ func (h personHandler) Edit(ctx *fasthttp.RequestCtx) {
 
 		msg := fmt.Sprintf("error decoding request body: %s", err.Error())
 		ctx.SetBodyString(msg)
+		return
 	}
 
 	person := Person{ID: int64(personID), Name: requestBody.Name}
@@ -76,6 +79,7 @@ func (h personHandler) Edit(ctx *fasthttp.RequestCtx) {
 
 		msg := fmt.Sprintf("error editing person: %s", err.Error())
 		ctx.SetBodyString(msg)
+		return
 	}
 
 	response, err := json.Marshal(EditPersonResponse{Edited: edited})
@@ -97,6 +101,7 @@ func (h personHandler) Fetch(ctx *fasthttp.RequestCtx) {
 
 		msg := fmt.Sprintf("error fetching people: %s", err.Error())
 		ctx.SetBodyString(msg)
+		return
 	}
 
 	response, err := json.Marshal(FetchResponse{People: people})
@@ -105,6 +110,7 @@ func (h personHandler) Fetch(ctx *fasthttp.RequestCtx) {
 
 		msg := fmt.Sprintf("error encoding response body: %s", err.Error())
 		ctx.SetBodyString(msg)
+		return
 	}
 
 	ctx.SetStatusCode(fasthttp.StatusCreated)

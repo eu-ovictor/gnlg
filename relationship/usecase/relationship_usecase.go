@@ -11,5 +11,5 @@ func NewRelationshipUsecase(repository relationship.Repository) relationshipUsec
 }
 
 func (u relationshipUsecase) Add(rel relationship.Relationship) error {
-    return u.repository.Add(rel)
+	return u.repository.Add(rel)
 }

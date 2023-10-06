@@ -26,7 +26,7 @@ func (h relationshipHandler) Add(ctx *fasthttp.RequestCtx) {
 
 		msg := fmt.Sprintf("error decoding request body: %s", err.Error())
 		ctx.SetBodyString(msg)
-        return
+		return
 	}
 
 	if err := h.usecase.Add(rel); err != nil {
@@ -34,7 +34,7 @@ func (h relationshipHandler) Add(ctx *fasthttp.RequestCtx) {
 
 		msg := fmt.Sprintf("error adding relationship: %s", err.Error())
 		ctx.SetBodyString(msg)
-        return
+		return
 	}
 
 	ctx.SetStatusCode(fasthttp.StatusCreated)

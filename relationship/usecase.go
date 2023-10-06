@@ -1,5 +1,5 @@
 package relationship
 
 type Usecase interface {
-    Add(rel Relationship) error 
+	Add(rel Relationship) error
 }

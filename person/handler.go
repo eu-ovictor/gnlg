@@ -17,10 +17,6 @@ type editPersonRequest struct {
 	Name string `json:"name"`
 }
 
-type EditPersonResponse struct {
-	Edited int64 `json:"edited"`
-}
-
 type personHandler struct {
 	usecase Usecase
 }
@@ -71,10 +67,15 @@ func (h personHandler) Edit(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
+	if requestBody.Name == "" {
+		ctx.SetStatusCode(fasthttp.StatusBadRequest)
+		ctx.SetBodyString("cannot edit person name to a empty value")
+		return
+	}
+
 	person := Person{ID: personID, Name: requestBody.Name}
 
-	edited, err := h.usecase.Edit(person)
-	if err != nil {
+	if err := h.usecase.Edit(person); err != nil {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 
 		msg := fmt.Sprintf("error editing person: %s", err.Error())
@@ -82,16 +83,7 @@ func (h personHandler) Edit(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	response, err := json.Marshal(EditPersonResponse{Edited: edited})
-	if err != nil {
-		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
-
-		msg := fmt.Sprintf("error encoding response body: %s", err.Error())
-		ctx.SetBodyString(msg)
-	}
-
 	ctx.SetStatusCode(fasthttp.StatusOK)
-	ctx.SetBody(response)
 }
 
 func (h personHandler) Fetch(ctx *fasthttp.RequestCtx) {

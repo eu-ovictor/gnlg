@@ -34,25 +34,19 @@ func (r sqlitePersonRepository) Add(p person.Person) error {
 	return nil
 }
 
-func (r sqlitePersonRepository) Edit(p person.Person) (int64, error) {
+func (r sqlitePersonRepository) Edit(p person.Person) error {
 	query := `UPDATE person SET name = ? WHERE rowid = ?`
 
 	stmt, err := r.DB.Prepare(query)
 	if err != nil {
-		return 0, fmt.Errorf("error preparing update person query: %w", err)
+		return fmt.Errorf("error preparing update person query: %w", err)
 	}
 
-	res, err := stmt.Exec(p.Name, p.ID)
-	if err != nil {
-		return 0, fmt.Errorf("error exec update person query: %w", err)
+	if _, err := stmt.Exec(p.Name, p.ID); err != nil {
+		return fmt.Errorf("error exec update person query: %w", err)
 	}
 
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		return 0, fmt.Errorf("error getting affected rows count: %w", err)
-	}
-
-	return rowsAffected, nil
+	return nil
 }
 
 func (r sqlitePersonRepository) Fetch(ID int, name string) ([]person.Person, error) {

@@ -18,7 +18,7 @@ func (u personUsecase) Add(p person.Person) error {
 	return u.repository.Add(p)
 }
 
-func (u personUsecase) Edit(p person.Person) (int64, error) {
+func (u personUsecase) Edit(p person.Person) error {
 	return u.repository.Edit(p)
 }
 

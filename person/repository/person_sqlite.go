@@ -25,6 +25,7 @@ func (r sqlitePersonRepository) Add(p person.Person) error {
 	if err != nil {
 		return fmt.Errorf("error preparing add person query: %w", err)
 	}
+	defer stmt.Close()
 
 	_, err = stmt.Exec(p.Name)
 	if err != nil {
@@ -41,6 +42,7 @@ func (r sqlitePersonRepository) Edit(p person.Person) error {
 	if err != nil {
 		return fmt.Errorf("error preparing update person query: %w", err)
 	}
+	defer stmt.Close()
 
 	if _, err := stmt.Exec(p.Name, p.ID); err != nil {
 		return fmt.Errorf("error exec update person query: %w", err)
@@ -69,6 +71,7 @@ func (r sqlitePersonRepository) Fetch(ID int, name string) ([]person.Person, err
 		return nil, fmt.Errorf("error preparing fetch people query: %w", err)
 
 	}
+	defer stmt.Close()
 
 	rows, err := stmt.Query(args...)
 	if err != nil {

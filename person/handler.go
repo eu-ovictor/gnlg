@@ -89,10 +89,10 @@ func (h personHandler) Edit(ctx *fasthttp.RequestCtx) {
 func (h personHandler) Fetch(ctx *fasthttp.RequestCtx) {
 	queryArgs := ctx.QueryArgs()
 
-	ID := queryArgs.GetUintOrZero("id")
+	personID := queryArgs.GetUintOrZero("id")
 	name := string(queryArgs.Peek("name"))
 
-	people, err := h.usecase.Fetch(ID, name)
+	people, err := h.usecase.Fetch(personID, name)
 	if err != nil {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 

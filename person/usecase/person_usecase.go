@@ -22,6 +22,6 @@ func (u personUsecase) Edit(p person.Person) (int64, error) {
 	return u.repository.Edit(p)
 }
 
-func (u personUsecase) Fetch() ([]person.Person, error) {
-	return u.repository.Fetch()
+func (u personUsecase) Fetch(ID int, name string) ([]person.Person, error) {
+	return u.repository.Fetch(ID, name)
 }

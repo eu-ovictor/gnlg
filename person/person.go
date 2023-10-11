@@ -1,6 +1,6 @@
 package person
 
 type Person struct {
-	ID   int64
+	ID   int
 	Name string
 }

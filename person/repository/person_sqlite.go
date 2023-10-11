@@ -55,10 +55,28 @@ func (r sqlitePersonRepository) Edit(p person.Person) (int64, error) {
 	return rowsAffected, nil
 }
 
-func (r sqlitePersonRepository) Fetch() ([]person.Person, error) {
-	query := `SELECT rowid, name FROM person`
+func (r sqlitePersonRepository) Fetch(ID int, name string) ([]person.Person, error) {
+	var args []interface{}
 
-	rows, err := r.DB.Query(query)
+	query := `SELECT rowid, name FROM person WHERE 1=1 `
+
+	if ID != 0 {
+		query += `AND rowid = ?`
+		args = append(args, ID)
+	}
+
+	if name != "" {
+		query += `AND name LIKE ?`
+		args = append(args, name+"%")
+	}
+
+	stmt, err := r.DB.Prepare(query)
+	if err != nil {
+		return nil, fmt.Errorf("error preparing fetch people query: %w", err)
+
+	}
+
+	rows, err := stmt.Query(args...)
 	if err != nil {
 		return nil, fmt.Errorf("error exec fetch people query: %w", err)
 	}
@@ -76,7 +94,6 @@ func (r sqlitePersonRepository) Fetch() ([]person.Person, error) {
 		}
 
 		people = append(people, person)
-
 	}
 
 	return people, nil

@@ -71,7 +71,7 @@ func (h personHandler) Edit(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	person := Person{ID: int64(personID), Name: requestBody.Name}
+	person := Person{ID: personID, Name: requestBody.Name}
 
 	edited, err := h.usecase.Edit(person)
 	if err != nil {
@@ -95,7 +95,12 @@ func (h personHandler) Edit(ctx *fasthttp.RequestCtx) {
 }
 
 func (h personHandler) Fetch(ctx *fasthttp.RequestCtx) {
-	people, err := h.usecase.Fetch()
+	queryArgs := ctx.QueryArgs()
+
+	ID := queryArgs.GetUintOrZero("id")
+	name := string(queryArgs.Peek("name"))
+
+	people, err := h.usecase.Fetch(ID, name)
 	if err != nil {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 

@@ -27,6 +27,7 @@ func AddRoutes(router *router.Router, usecase Usecase) {
 	router.GET("/person", handler.Fetch)
 	router.POST("/person", handler.Add)
 	router.PUT("/person/{id}", handler.Edit)
+	router.DELETE("/person/{id}", handler.Delete)
 }
 
 func (h personHandler) Add(ctx *fasthttp.RequestCtx) {
@@ -112,4 +113,20 @@ func (h personHandler) Fetch(ctx *fasthttp.RequestCtx) {
 
 	ctx.SetStatusCode(fasthttp.StatusCreated)
 	ctx.SetBody(response)
+}
+
+func (h personHandler) Delete(ctx *fasthttp.RequestCtx) {
+	idParam := ctx.UserValue("id").(string)
+
+	personID, _ := strconv.Atoi(idParam)
+
+	if err := h.usecase.Delete(personID); err != nil {
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+
+		msg := fmt.Sprintf("error deleting person: %s", err.Error())
+		ctx.SetBodyString(msg)
+		return
+	}
+
+	ctx.SetStatusCode(fasthttp.StatusOK)
 }

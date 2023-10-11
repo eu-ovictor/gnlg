@@ -25,3 +25,7 @@ func (u personUsecase) Edit(p person.Person) error {
 func (u personUsecase) Fetch(ID int, name string) ([]person.Person, error) {
 	return u.repository.Fetch(ID, name)
 }
+
+func (u personUsecase) Delete(ID int) error {
+	return u.repository.Delete(ID)
+}

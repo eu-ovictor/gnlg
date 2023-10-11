@@ -95,3 +95,45 @@ func (r sqlitePersonRepository) Fetch(ID int, name string) ([]person.Person, err
 
 	return people, nil
 }
+
+func (r sqlitePersonRepository) Delete(ID int) error {
+	tx, err := r.DB.Begin()
+	if err != nil {
+		return fmt.Errorf("error begin transaction to delete person: %w", err)
+	}
+
+	deleteRelsQuery := `DELETE FROM relationship WHERE ancestor = ? OR descendant = ?`
+
+	deleteRelsStmt, err := tx.Prepare(deleteRelsQuery)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("error preparing delete person relationships query: %w", err)
+	}
+	defer deleteRelsStmt.Close()
+
+	if _, err := deleteRelsStmt.Exec(ID, ID); err != nil {
+		tx.Rollback()
+		return fmt.Errorf("error exec delete person relationships query: %w", err)
+	}
+
+	deletePersonQuery := `DELETE FROM person WHERE rowid = ?`
+
+	deletePersonStmt, err := tx.Prepare(deletePersonQuery)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("error preparing delete person query: %w", err)
+	}
+	defer deleteRelsStmt.Close()
+
+	if _, err := deletePersonStmt.Exec(ID); err != nil {
+		tx.Rollback()
+		return fmt.Errorf("error exec delete person query: %w", err)
+	}
+
+	if err = tx.Commit(); err != nil {
+		tx.Rollback()
+		return fmt.Errorf("error commiting delete person queries: %w", err)
+	}
+
+	return nil
+}

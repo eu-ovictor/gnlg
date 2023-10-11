@@ -1,5 +1,6 @@
 package relationship
 
 type Repository interface {
-	Add(r Relationship) error
+	Add(members Members) error
+    FetchByID(ID int64) ([]NamedMembers, error)
 }

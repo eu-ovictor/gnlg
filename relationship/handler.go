@@ -26,7 +26,7 @@ func AddRoutes(router *router.Router, usecase Usecase) {
 	h := relationshipHandler{usecase}
 
 	router.POST("/relationship", h.Add)
-    router.GET("/relationship/{id}", h.FetchByID)
+	router.GET("/relationship/{id}", h.FetchByID)
 }
 
 func (h relationshipHandler) Add(ctx *fasthttp.RequestCtx) {
@@ -66,15 +66,15 @@ func (h relationshipHandler) FetchByID(ctx *fasthttp.RequestCtx) {
 	}
 
 	responseBody := FetchByIDResponse{
-        Members: make([]FetchByIDResponseItem, len(relationships)),
-    }
+		Members: make([]FetchByIDResponseItem, len(relationships)),
+	}
 
-    memberIdx := 0
+	memberIdx := 0
 	for member, relationships := range relationships {
 		responseItem := FetchByIDResponseItem{Name: member, Relationships: relationships}
 
 		responseBody.Members[memberIdx] = responseItem
-        memberIdx++
+		memberIdx++
 	}
 
 	response, err := json.Marshal(responseBody)

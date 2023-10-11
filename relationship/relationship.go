@@ -18,8 +18,8 @@ const (
 )
 
 type Relationship struct {
-    Member  string `json:"name"`
-    Kinship Kinship `json:"relationship"`
+	Member  string  `json:"name"`
+	Kinship Kinship `json:"relationship"`
 }
 
 type Relationships map[string][]Relationship

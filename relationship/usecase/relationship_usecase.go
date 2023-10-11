@@ -15,18 +15,18 @@ func (u relationshipUsecase) Add(members relationship.Members) error {
 }
 
 func (u relationshipUsecase) FetchByID(ID int64) (relationship.Relationships, error) {
-    members, err := u.repository.FetchByID(ID)
-    if err != nil {
-        return nil, err 
-    }
+	members, err := u.repository.FetchByID(ID)
+	if err != nil {
+		return nil, err
+	}
 
-    relationships := make(relationship.Relationships, len(members))
+	relationships := make(relationship.Relationships, len(members))
 
-    for _, member := range(members) {
-        rel := relationship.Relationship{Member: member.Parent, Kinship: relationship.Parent}
+	for _, member := range members {
+		rel := relationship.Relationship{Member: member.Parent, Kinship: relationship.Parent}
 
-        relationships[member.Child] = append(relationships[member.Child], rel)
-    }
+		relationships[member.Child] = append(relationships[member.Child], rel)
+	}
 
-    return relationships, nil
+	return relationships, nil
 }

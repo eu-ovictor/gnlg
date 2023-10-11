@@ -20,9 +20,9 @@ import (
 )
 
 func setup(ctx context.Context, db *sql.DB) error {
-    _, err := db.ExecContext(ctx, "PRAGMA foreign_keys = ON;")
+	_, err := db.ExecContext(ctx, "PRAGMA foreign_keys = ON;")
 	if err != nil {
-        return fmt.Errorf("error enable foreign_keys constraint: %w", err)
+		return fmt.Errorf("error enable foreign_keys constraint: %w", err)
 	}
 
 	personQuery := `
@@ -58,12 +58,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-    defer db.Close()
+	defer db.Close()
 
 	ctx, cancelFunc := context.WithTimeout(context.TODO(), 1*time.Second)
 	defer cancelFunc()
-
-
 
 	if err := setup(ctx, db); err != nil {
 		panic(err)
